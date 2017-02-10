@@ -1,0 +1,4 @@
+logs/
+apidoc/
+node_modules/
+config.json
