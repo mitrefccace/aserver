@@ -10,5 +10,9 @@
 	"https": {
 		"certificate": "path_to_cert",
 		"private_key": "path_to_key"
+	},
+	"redis": {
+        "host": "host",
+        "port": 1000
 	}
 }
