@@ -362,6 +362,131 @@ var appRouter = function(app,connection) {
 
 	});
 
+   
+   
+  /**
+  * @api {post} /addAgents ADDS or REPLACES agents in the agent_data table that match on the unique fields (username and email)
+  * @apiName Adds or Replaces agent_data records that match on username or email
+  * @apiGroup AddAgents
+  * @apiVersion 1.0.0
+  *
+  * @apiSuccessExample Success-Response
+  *     HTTP/1.1 200 OK
+  *    {
+  *      "message":"Success!"
+  *    }
+  * @apiErrorExample Error-Response
+  *     HTTP/1.1 200 OK
+  *    {
+  *      "message":"Error messages..."
+  *    }
+  */
+  /*
+   Expected Input json:
+   
+   {
+        "data": [{
+            "username": "<insert username>",
+            "password": "<insert password>",
+            "first_name": "<insert fname>",
+            "last_name": "<insert lname>",
+            "role": "<insert role>",
+            "phone": "<insert phone>",
+            "email": "<insert email>",
+            "organization": "<insert organization>",
+            "is_approved": 0,
+            "is_active": 0,
+            "extension_id": 0,
+            "queue_id": 0,
+            "queue2_id": 0
+        }, {
+            "username": "<insert username>",
+            "password": "<insert password>",
+            "first_name": "<insert fname>",
+            "last_name": "<insert lname>",
+            "role": "<insert role>",
+            "phone": "<insert phone>",
+            "email": "<insert email>",
+            "organization": "<insert organization>",
+            "is_approved": 0,
+            "is_active": 0,
+            "extension_id": 0,
+            "queue_id": 0,
+            "queue2_id": 0
+        },{
+            "username": "<insert username>",
+            "password": "<insert password>",
+            "first_name": "<insert fname>",
+            "last_name": "<insert lname>",
+            "role": "<insert role>",
+            "phone": "<insert phone>",
+            "email": "<insert email>",
+            "organization": "<insert organization>",
+            "is_approved": 0,
+            "is_active": 0,
+            "extension_id": 0,
+            "queue_id": 0,
+            "queue2_id": 0
+        }]
+    }
+   
+   */
+	app.post('/addAgents',function(req, res) {
+		console.log('Got a POST request at /addAgents');
+        
+        var agents = req.body.data;
+        //console.log(agents);
+        
+        var merrors = '';
+        var oerrors = '';
+        var i = 0;
+        for(var rec of req.body.data) {
+        
+            //replace any records that have the same unique value (i.e., username and email)
+            var query = 'REPLACE INTO `agent_data` SET '
+            + '  username = ?'
+            + ', password = ?'
+            + ', first_name = ?'
+			+ ', last_name = ?'
+			+ ', role = ?'
+			+ ', phone = ?'
+			+ ', email = ?'
+			+ ', organization = ?'
+			+ ', is_approved = ?'
+			+ ', is_active = ?'
+            + ', extension_id = ?'
+            + ', queue_id = ?'
+            + ', queue2_id = ?';
+        
+			connection.query(query, [rec.username, rec.password, rec.first_name, rec.last_name, rec.role, rec.phone, rec.email, rec.organization, rec.is_approved, rec.is_active, rec.extension_id, rec.queue_id, rec.queue2_id ], function(err, results) {
+                if (err) {
+                    merrors = merrors + rec.username + ' ';
+                }
+                else if (results.affectedRows > 0){
+                    ;
+                } else {
+                    oerrors = oerrors + i + ' ';
+                }
+			});  
+            i = i + 1;
+        }
+
+        var errormsg = '';
+        if (merrors.length > 0) {
+            errormsg += 'MySQL errors: ' + merrors + '. ';
+        }
+        if (oerrors.length > 0) {
+            errormsg += 'Record errors: ' + oerrors + '. ';
+        }
+        
+        if (errormsg.length > 0)
+            return res.status(200).send({'message': errormsg});
+        else
+            return res.status(200).send({'message': 'Success!'});
+	});   
+   
+   
+    
 };
 
 module.exports = appRouter;
