@@ -28,10 +28,10 @@ Usage:
 node app.js [ port ]
 
 #### Testing the Server in AWS
-* curl -k --request GET https://*hostname:port*/
-* curl -k --request GET https://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
-* curl -k --request GET https://*hostname:port*/getallagentrecs
-* curl -k -H "Content-Type: application/json" -X POST -d '{"agent_id":25, "first_name": "Marie", "last_name": "C.", "role": "Manager", "phone": "444-444-4444", "email": "administrator@portal.com", "organization": "Organization Zulu", "is_approved": 0, "is_active": 0 }' https://*hostname:port*/updateProfile
+* `curl -k --request GET https://*hostname:port*/`
+* `curl -k --request GET https://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>`
+* `curl -k --request GET https://*hostname:port*/getallagentrecs`
+* `curl -k -H "Content-Type: application/json" -X POST -d '{"agent_id":25, "first_name": "Marie", "last_name": "C.", "role": "Manager", "phone": "444-444-4444", "email": "administrator@portal.com", "organization": "Organization Zulu", "is_approved": 0, "is_active": 0 }' https://*hostname:port*/updateProfile`
 
 
 # SERVICE API
