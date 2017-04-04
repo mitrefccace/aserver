@@ -107,6 +107,8 @@ Code: 501 NOT IMPLEMENTED, Content: `{"message": "records returned is not 1"}`
 
 `curl -k --request GET https://hostname:port/agentverify/?username=someuser&password=somepassword`
 
+----
+
 ## getallagentrecs
 
 Get all the agent records in the agent database.
@@ -213,6 +215,8 @@ Code: 501 INTERNAL SERVER ERROR, Content: `{'message': 'records returned is not 
 
 `curl -k --request GET https://host:port/getallagentrecs`
 
+----
+
 ## Test Service
 
 _This is just a test service to quickly check the connection._
@@ -254,6 +258,8 @@ _None_
 ### Sample Call
 
 `curl -k --request GET https://host:port/`
+
+----
 
 ## getscript
 
@@ -318,6 +324,8 @@ Code: 501 NOT IMPLEMENTED, Content: `{"message": "records returned is not 1"}`
 ### Sample Call
 
 `curl -k --request GET https://host:port/getscript/?type=GeneralComplaint&queue_name=ComplaintsQueue
+
+----
 
 ## updateProfile
 
