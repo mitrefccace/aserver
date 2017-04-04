@@ -97,6 +97,7 @@ CREATE TABLE `scripts` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `queue_id` int(10) NOT NULL,
   `text` varchar(10000) NOT NULL,
+  `type` varchar(20) NOT NULL,  
   `date` date NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;

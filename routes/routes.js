@@ -203,7 +203,7 @@ var appRouter = function(app,connection) {
         }
         else {
             //Query DB for script info
-            connection.query('SELECT s.id, aq.queue_name, s.text, s.date FROM scripts AS s, asterisk_queues AS aq WHERE s.queue_id = aq.id AND aq.queue_name = ?',[req.query.queue_name], function(err, rows, fields) {
+            connection.query('SELECT s.id, aq.queue_name, s.text, s.date, s.type FROM scripts AS s, asterisk_queues AS aq WHERE s.queue_id = aq.id AND aq.queue_name = ?',[req.query.queue_name], function(err, rows, fields) {
                 if (err) {
                     console.log(err);
                     return res.status(500).send({'message': 'mysql error'});
@@ -262,7 +262,7 @@ var appRouter = function(app,connection) {
 	app.get('/getallscripts', function(req, res) {
 
         //Query DB for script info
-        connection.query('SELECT s.id, aq.queue_name, s.text, s.date FROM scripts AS s, asterisk_queues AS aq WHERE s.queue_id = aq.id', function(err, rows, fields) {
+        connection.query('SELECT s.id, aq.queue_name, s.text, s.date, s.type FROM scripts AS s, asterisk_queues AS aq WHERE s.queue_id = aq.id', function(err, rows, fields) {
             if (err) {
                 console.log(err);
                 return res.status(500).send({'message': 'mysql error'});
