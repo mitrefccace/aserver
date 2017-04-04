@@ -267,7 +267,7 @@ _Get a script for a particular type of complaint for a complaint queue._
 
 ### URL
 
-_/getscript/?type=GeneralComplaint&queue_name=ComplaintsQueue_
+_/getscript/?queue_name=queuename_
 
 ### Method
 
@@ -278,7 +278,6 @@ _/getscript/?type=GeneralComplaint&queue_name=ComplaintsQueue_
 #### Required
 
 ```
-type=[string]
 queue_name=[string]
 ```
 
@@ -300,11 +299,23 @@ Content:
 {
 	"message": "success",
 	"data": [{
-		"id": 1,
-		"type": "GeneralComplaint",
-		"text": "Hello [CUSTOMER NAME], this is [AGENT NAME] calling from Agent Portal Services. Have I caught you in the middle of anything? The purpose for my call is to help improve our service to customers. I do not know the nature of your complaint, and this is why I have a couple of questions. How do you feel about our service? When was the last time you used our service? Well, based on your answers, it sounds like we can learn a lot from you if we were to talk in more detail. Are you available to put a brief 15 to 20 minute meeting on the calendar where we can discuss this in more detail and share any insight and value you may have to offer?",
-		"queue_name": "ZVRSComplaintsQueue",
-		"date": "2016-04-01T00:00:00.000Z"
+		"id": 2,
+		"queue_name": "ComplaintsQueue",
+		"text": "Hello [CUSTOMER NAME], this is [AGENT NAME] calling from Agent Portal Services. I understand that you have a complaint to discuss with us?",
+		"date": "2016-04-01T00:00:00.000Z",
+		"type": "Default"
+	}, {
+		"id": 3,
+		"queue_name": "ComplaintsQueue",
+		"text": "I see you need to change your profile information...",
+		"date": "2017-04-04T00:00:00.000Z",
+		"type": "Profile"
+	}, {
+		"id": 5,
+		"queue_name": "ComplaintsQueue",
+		"text": "You are new to our system.",
+		"date": "2017-04-04T00:00:00.000Z",
+		"type": "New"
 	}]
 }
 ```
@@ -319,11 +330,96 @@ Code: 404 NOT FOUND, Content: `{"message": "script not found"}`
 
 Code: 500 INTERNAL SERVER ERROR, Content: `{"message": "mysql error"}`
 
-Code: 501 NOT IMPLEMENTED, Content: `{"message": "records returned is not 1"}`
+### Sample Call
+
+`curl -k --request GET https://host:port/getscript/?queue_name=thequeuename
+
+----
+
+## getallscripts
+
+_Get all scripts._
+
+### URL
+
+_/getallscripts_
+
+### Method
+
+`GET`
+
+### URL Params
+
+#### Required
+
+_None_
+
+#### Optional
+
+_None_
+
+### Data Params
+
+_None_
+
+### Success Response
+
+Code: 200
+
+Content: 
+
+```
+{
+	"message": "success",
+	"data": [{
+		"id": 1,
+		"queue_name": "GeneralQuestionsQueue",
+		"text": "Hello [CUSTOMER NAME], this is [AGENT NAME] calling from Agent Portal Services. Have I caught you in the middle of anything? The purpose for my call is to help improve our service to customers. I do not know the nature of your complaint, and this is why I have a couple of questions. How do you feel about our service? When was the last time you used our service? Well, based on your answers, it sounds like we can learn a lot from you if we were to talk in more detail. Are you available to put a brief 15 to 20 minute meeting on the calendar where we can discuss this in more detail and share any insight and value you may have to offer?",
+		"date": "2016-04-01T00:00:00.000Z",
+		"type": "Default"
+	}, {
+		"id": 2,
+		"queue_name": "ComplaintsQueue",
+		"text": "Hello [CUSTOMER NAME], this is [AGENT NAME] calling from Agent Portal Services. I understand that you have a complaint to discuss with us?",
+		"date": "2016-04-01T00:00:00.000Z",
+		"type": "Default"
+	}, {
+		"id": 3,
+		"queue_name": "ComplaintsQueue",
+		"text": "I see you need to change your profile information...",
+		"date": "2017-04-04T00:00:00.000Z",
+		"type": "Profile"
+	}, {
+		"id": 4,
+		"queue_name": "GeneralQuestionsQueue",
+		"text": "I see you need to change your profile information...",
+		"date": "2017-04-04T00:00:00.000Z",
+		"type": "Profile"
+	}, {
+		"id": 5,
+		"queue_name": "ComplaintsQueue",
+		"text": "You are new to our system.",
+		"date": "2017-04-04T00:00:00.000Z",
+		"type": "New"
+	}, {
+		"id": 6,
+		"queue_name": "GeneralQuestionsQueue",
+		"text": "You are new to our system.",
+		"date": "2017-04-04T00:00:00.000Z",
+		"type": "New"
+	}]
+}
+```
+
+### Error Response
+
+Code: 404 NOT FOUND, Content: `{"message": "script not found"}`
+
+Code: 500 INTERNAL SERVER ERROR, Content: `{"message": "mysql error"}`
 
 ### Sample Call
 
-`curl -k --request GET https://host:port/getscript/?type=GeneralComplaint&queue_name=ComplaintsQueue
+`curl -k --request GET https://host:port/getallscripts`
 
 ----
 
