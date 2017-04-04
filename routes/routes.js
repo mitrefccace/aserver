@@ -171,7 +171,8 @@ var appRouter = function(app,connection) {
     *               "id": 0,
     *               "queue_name": "Complaints",
     *               "text": "The script text the agent will say to the caller.....",
-    *               "date": '2016-04-01'
+    *               "date": '2016-04-01',
+    *               "type": 'Complaint Script'
     *            }]
     *    }
     *
@@ -238,12 +239,14 @@ var appRouter = function(app,connection) {
   *               "id": 0,
   *               "queue_name": "Complaints",
   *               "text": "The script text the agent will say to the caller.....",
-  *               "date": '2016-04-01'
+  *               "date": '2016-04-01',
+  *               "type": 'New Complaint Script'
   *            },{
   *               "id": 1,
   *               "queue_name": "Other",
   *               "text": "The script text the agent will say to the caller.....",
-  *               "date": '2016-04-15'
+  *               "date": '2016-04-15',
+  *               "type": 'Other Type'
   *           }]
   *    }
   *
