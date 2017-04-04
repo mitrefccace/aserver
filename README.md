@@ -28,10 +28,10 @@ Usage:
 node app.js [ port ]
 
 #### Testing the Server in AWS
-* curl --request GET http://*hostname:port*/
-* curl --request GET http://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
-* curl --request GET http://*hostname:port*/getallagentrecs
-* curl -H "Content-Type: application/json" -X POST -d '{"agent_id":25, "first_name": "Marie", "last_name": "C.", "role": "Manager", "phone": "444-444-4444", "email": "administrator@portal.com", "organization": "Organization Zulu", "is_approved": 0, "is_active": 0 }' http://*hostname:port*/updateProfile
+* curl -k --request GET https://*hostname:port*/
+* curl -k --request GET https://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
+* curl -k --request GET https://*hostname:port*/getallagentrecs
+* curl -k -H "Content-Type: application/json" -X POST -d '{"agent_id":25, "first_name": "Marie", "last_name": "C.", "role": "Manager", "phone": "444-444-4444", "email": "administrator@portal.com", "organization": "Organization Zulu", "is_approved": 0, "is_active": 0 }' https://*hostname:port*/updateProfile
 
 # SERVICE API
 
@@ -96,7 +96,7 @@ node app.js [ port ]
 
 * **Sample Call:**
 
-  http://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
+  https://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
 
 * **Notes:**
 
@@ -195,7 +195,7 @@ node app.js [ port ]
 
 * **Sample Call:**
 
-  http://*hostname:port*/getallagentrecs
+  https://*hostname:port*/getallagentrecs
 
 * **Notes:**
 
@@ -241,7 +241,7 @@ _This is just a test service to quickly check the connection._
 
 * **Sample Call:**
 
-  http://*hostname:port*/
+  https://*hostname:port*/
 
 * **Notes:**
 
@@ -289,7 +289,7 @@ _This is just a test service to quickly check the connection._
 
 * **Sample Call:**
 
-  http://*hostname:port*/getscript/?type=GeneralComplaint&queue_name=ComplaintsQueue
+  https://*hostname:port*/getscript/?type=GeneralComplaint&queue_name=ComplaintsQueue
 
 * **Notes:**
 
@@ -343,7 +343,7 @@ _Update an agent profile record in the agent database._
 
   * **Sample Call:**
 
- * curl -H "Content-Type: application/json" -X POST -d '{"agent_id":25, "first_name": "Marie", "last_name": "C.", "role": "Manager", "phone": "444-444-4444", "email": "administrator@portal.com", "organization": "Organization Zulu", "is_approved": 0, "is_active": 0 }' http://*hostname:port*/updateProfile
+ * curl -k -H "Content-Type: application/json" -X POST -d '{"agent_id":25, "first_name": "Marie", "last_name": "C.", "role": "Manager", "phone": "444-444-4444", "email": "administrator@portal.com", "organization": "Organization Zulu", "is_approved": 0, "is_active": 0 }' https://*hostname:port*/updateProfile
 
   * **Notes:**
 
