@@ -37,80 +37,70 @@ node app.js [ port ]
 
 ## agentverify
 
-  _Verify an agent ID and password._
+_Verify an agent ID and password._
 
 * **URL**
 
-  _/agentverify/?username=<omitted>&password=<omitted>_
+_/agentverify/?username=<omitted>&password=<omitted>_
 
-* **Method:**
+* **Method:** `GET`
+* **URL Params**
+    **Required:**
+    `username=[string]`
+    `password=[string]`
 
-   `GET`
-
-*  **URL Params**
-
-   **Required:**
-
-   `username=[string]`
-   `password=[string]`
-
-   **Optional:**
-
-   _None._
-
+    **Optional:**
+    _None._
 * **Data Params**
-
-  _None._
-
+    _None._
 * **Success Response:**
-
-  * **Code:** 200, **Content:** `{
-  "message": "success",
-  "data": [
-    {
-      "agent_id": 1,
-      "username": "<omitted>",
-      "first_name": "Ed",
-      "last_name": "Jones",
-      "role": "manager",
-      "phone": "222-000-0000",
-      "email": "ed@portal.com",
-      "organization": "Organization Bravo",
-      "extension": 4001,
-      "extension_secret": "<omitted>",
-      "queue_name": "GeneralQuestionsQueue",
-      "soft_extension": 6000,
-      "soft_queue_name": "ComplaintsQueue"    
+    * **Code:** 200, **Content:** `{
+        "message": "success",
+        "data": [
+            {
+                "agent_id": 1,
+                "username": "<omitted>",
+                "first_name": "Ed",
+                "last_name": "Jones",
+                "role": "manager",
+                "phone": "222-000-0000",
+                "email": "ed@portal.com",
+                "organization": "Organization Bravo",
+                "extension": 4001,
+                "extension_secret": "<omitted>",
+                "queue_name": "GeneralQuestionsQueue",
+                "soft_extension": 6000,
+                "soft_queue_name": "ComplaintsQueue"    
+            }
+        ]
     }
-  ]
-}
 
 * **Error Response:**
-  * **Code:** 400 BAD REQUEST, **Content:** `{'message': 'missing username'}`
-  * **Code:** 400 BAD REQUEST, **Content:** `{'message': 'missing password'}`
-  * **Code:** 404 NOT FOUND, **Content:** `{'message': 'username number not found'}`
-  * **Code:** 500 INTERNAL SERVER ERROR, **Content:** `{'message': 'mysql error'}`
-  * **Code:** 501 NOT IMPLEMENTED, **Content:** `{'message': 'records returned is not 1'}`
+    * **Code:** 400 BAD REQUEST, **Content:** `{'message': 'missing username'}`
+    * **Code:** 400 BAD REQUEST, **Content:** `{'message': 'missing password'}`
+    * **Code:** 404 NOT FOUND, **Content:** `{'message': 'username number not found'}`
+    * **Code:** 500 INTERNAL SERVER ERROR, **Content:** `{'message': 'mysql error'}`
+    * **Code:** 501 NOT IMPLEMENTED, **Content:** `{'message': 'records returned is not 1'}`
 
 * **Sample Call:**
 
-  https://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
+    https://*hostname:port*/agentverify/?username=<omitted>&password=<omitted>
 
 * **Notes:**
 
-  _None._
+    _None._
 
 ## getallagentrecs
 
-  _Get all the agent records in the agent database._
+    _Get all the agent records in the agent database._
 
 * **URL**
 
-  _/getallagentrecs_
+    _/getallagentrecs_
 
 * **Method:**
 
-   `GET`
+    `GET`
 
 *  **URL Params**
 
