@@ -191,11 +191,6 @@ var appRouter = function(app,connection) {
     *     {
     *        'message': 'mysql error'
     *     }
-    * @apiErrorExample 501 Error-Response
-    *     HTTP/1.1 501 Not implemented
-    *     {
-    *        'message': 'records returned is not 1'
-    *     }
     */
 
 	app.get('/getscript', function(req, res) {
@@ -209,17 +204,13 @@ var appRouter = function(app,connection) {
                     console.log(err);
                     return res.status(500).send({'message': 'mysql error'});
                 }
-                else if (rows.length === 1) {
+                else if (rows.length >= 1) {
                     //success
                     json = JSON.stringify(rows);
                     res.status(200).send({'message': 'success', 'data':rows});
                 }
                 else if (rows.length === 0) {
                     return res.status(404).send({'message': 'script not found'});
-                }
-                else {
-                    console.log('error - records returned is ' + rows.length);
-                    return res.status(501).send({'message': 'records returned is not 1'});
                 }
             });
         }
