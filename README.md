@@ -37,7 +37,7 @@ node app.js [ port ]
 
 ----
 
-#agentverify
+# agentverify
 
   _Verify an agent ID and password._
 
@@ -103,7 +103,7 @@ node app.js [ port ]
   _None._
 
 ----
-#getallagentrecs
+# getallagentrecs
 
   _Get all the agent records in the agent database._
 
@@ -203,7 +203,7 @@ node app.js [ port ]
 
 ----
 
-##Test Service
+# Test Service
 
 _This is just a test service to quickly check the connection._
 
@@ -249,7 +249,7 @@ _This is just a test service to quickly check the connection._
 
 ----
 
-#getscript
+# getscript
 
   _Get a script for a particular type of complaint for a complaint queue._
 
@@ -296,7 +296,7 @@ _This is just a test service to quickly check the connection._
   _None._
 
  ----
- ##updateProfile
+# updateProfile
 
 _Update an agent profile record in the agent database._
 
