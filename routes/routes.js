@@ -155,6 +155,64 @@ var appRouter = function(app,connection) {
         });
     });
 
+  /**
+* @api {get} /GetAgentRec Gets a dump of a single Agent Record from the database.
+* @apiName Get Agent Rec
+* @apiGroup GetAgentRec
+* @apiVersion 1.0.0
+*
+* @apiSuccessExample 200 Success-Response
+*     HTTP/1.1 200 OK
+*    {
+*      "message":"success",
+*      "data":[{
+*             agent_id: 0,
+*             username: "CSRAgent0",
+*             first_name: "John",
+*             last_name: "Smith",
+*             phone: "1112223333",
+*             role:"Agent",
+*             email:"jsmith@email.xyz",
+*             organization:"call center xyz",
+*             is_approved: 1,
+*             is_active: 1,
+*             extension: 1234,
+*             extension_secret: "ABC123",
+*             queue_name: "Queue1234",
+*             queue_name: null
+*            }]
+*    }
+*
+* @apiSuccessExample 200 Success-Response
+*     HTTP/1.1 200 OK
+*    {
+*        "message": "no agent records",
+*        "data": ""
+*    }
+* @apiErrorExample 500 Error-Response
+*     HTTP/1.1 500 Internal Server Error
+*     {
+*        'message': 'mysql error'
+*     }
+*/    
+	app.get('/getagentrec/:username', function(req, res) { 
+        //Query DB for an agent record
+        connection.query('SELECT ad.agent_id, ad.username, ad.first_name, ad.last_name, ad.role, ad.phone, ad.email, ad.organization, ad.is_approved, ad.is_active, ae.extension, ae.extension_secret, aq.queue_name, aq2.queue_name AS queue2_name, oc.channel FROM agent_data AS ad LEFT JOIN asterisk_extensions AS ae ON ad.agent_id = ae.id LEFT JOIN asterisk_queues AS aq ON aq.id = ad.queue_id LEFT JOIN asterisk_queues AS aq2 ON aq2.id = ad.queue2_id LEFT JOIN outgoing_channels AS oc ON oc.id = ae.id WHERE ad.username =  ?',[req.params.username], function(err, rows, fields) {
+            if (err) {
+                console.log(err);
+            return res.status(500).send({'message': 'mysql error'});
+            }
+            else if (rows.length > 0) {
+                //success
+                json = JSON.stringify(rows);
+                res.status(200).send({'message': 'success', 'data':rows});
+            }
+            else if (rows.length === 0) {
+                return res.status(200).send({'message': 'no agent records', 'data':''});
+            }
+        });
+    });    
+    
     /**
     * @api {get} /GetScript Gets a specify CSR Agent Script by queue name from the database.
     * @apiName GetScript

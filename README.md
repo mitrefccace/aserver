@@ -217,6 +217,76 @@ Code: 501 INTERNAL SERVER ERROR, Content: `{'message': 'records returned is not 
 
 ----
 
+## getagentrec
+
+Get an agent record from the agent database.
+
+### URL
+
+_/getagentrec/:username_
+
+### Method
+
+`GET`
+
+### URL Params
+
+_username_
+
+#### Required
+
+_None_
+
+#### Optional
+
+None
+
+### Data Params
+
+_None_
+
+### Success Response
+
+Code: 200
+
+Content:
+
+```
+{
+	"message": "success",
+	"data": [{
+		"agent_id": 0,
+		"username": "user0",
+		"first_name": "Kevin",
+		"last_name": "Spacey",
+		"role": "administrator",
+		"phone": "000-000-0000",
+		"email": "admin@portal.com",
+		"organization": "Organization Alpha",
+		"is_approved": 1,
+		"is_active": 1,
+		"extension": 5010,
+		"extension_secret": "secret0",
+		"queue_name": "ComplaintsQueue",
+		"soft_extension": 6000,
+		"soft_queue_name": "ComplaintsQueue"
+	}]
+}
+```
+
+### Error Response
+
+Code: 500 INTERNAL SERVER ERROR, Content: `{'message': 'mysql error'}`
+
+Code: 200 INTERNAL SERVER ERROR, Content: `{'message': 'no agent records','data': ''}`
+
+
+### Sample Call
+
+`curl -k --request GET https://host:port/getagentrec/user1`
+
+----
+
 ## Test Service
 
 _This is just a test service to quickly check the connection._
