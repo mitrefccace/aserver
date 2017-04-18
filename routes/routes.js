@@ -417,8 +417,8 @@ var appRouter = function(app,connection) {
    
    
   /**
-  * @api {post} /addAgents ADDS or REPLACES agents in the agent_data table that match on the unique fields (username and email)
-  * @apiName Adds or Replaces agent_data records that match on username or email
+  * @api {post} /addAgents ADDS agents to the agent_data table. username and email must be unique, or else the add is ignored.
+  * @apiName Adds agent_data records
   * @apiGroup AddAgents
   * @apiVersion 1.0.0
   *
@@ -493,9 +493,8 @@ var appRouter = function(app,connection) {
         var oerrors = '';
         var i = 0;
         for(var rec of req.body.data) {
-        
-            //replace any records that have the same unique value (i.e., username and email)
-            var query = 'REPLACE INTO `agent_data` SET '
+
+            var query = 'INSERT INTO `agent_data` SET '
             + '  username = ?'
             + ', password = ?'
             + ', first_name = ?'
