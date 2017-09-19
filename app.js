@@ -47,6 +47,14 @@ var logger = log4js.getLogger(logname);
 nconf.file({file: cfile});
 var configobj = JSON.parse(fs.readFileSync(cfile,'utf8'));
 
+//the presence of the clearText field in config.json means that the file is in clear text
+//remove the field if the file is encoded
+var clearText = false;
+if (typeof(nconf.get('clearText')) !== "undefined") {
+    console.log('clearText field is in config.json. assuming file is in clear text');
+    clearText = true;
+}
+
 // Set log4js level from the config file
 logger.setLevel(decodeBase64(nconf.get('debuglevel')));
 logger.trace('TRACE messages enabled.');
@@ -112,9 +120,11 @@ process.on('SIGINT', function() {
  * @returns {unresolved} Decoded readable string.
  */
 function decodeBase64(encodedString) {
-
-    var decodedString = new Buffer(encodedString, 'base64');
-    // console.log('in: ' + encodedString + ', out: ' + decodedString);
-
-    return(decodedString.toString());
+    var decodedString = null;
+    if (clearText) {
+        decodedString = encodedString;
+    } else {
+        decodedString = new Buffer(encodedString, 'base64');
+    }
+    return (decodedString.toString());
 }
