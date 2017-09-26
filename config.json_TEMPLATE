@@ -1,4 +1,5 @@
 {
+  "clearText": "Remove this field if this file is encoded",
 	"debuglevel": "ERROR",
 	"port": 1234,
 	"mysql": {

@@ -23,6 +23,25 @@ To install aserver, follow the README.md file in the autoinstall folder. The ins
     * apidoc -i routes/ -o apidoc/
     * node app.js
 
+## Configuration
+1. Copy config.json_TEMPLATE to config.json
+1. Insert values for the parameters below
+1. Values must be Encoded using base64 strings (example "port":8080 becomes "port":"ODA4MA=="), unless this is in development mode (see the clearText flag below).
+
+| Key         | Description |
+|-------------|-------------|
+| clearText   | If present, indicates that the config.json file is unencoded. |
+| debuglevel  | Logging level; TRACE, DEBUG, INFO, WARN, ERROR, or FATAL |
+| port  | The port for the server to listen on |
+| mysql:host      | The hostname for the MySQL database |
+| mysql:user      | The username for the MySQL database |
+| mysql:password  | The password for the MySQL database |
+| mysql:database      | The name of the MySQL database |
+| https:certificate | The path to the SSL certificate |
+| https:private_key | The path to the SSL private key |
+| redis:host | The IP address of the Redis server |
+| redis:port | The port number of the Redis server |
+    
 #### Running the Server
 Usage:  
 node app.js [ port ]
