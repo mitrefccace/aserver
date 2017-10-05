@@ -4,7 +4,7 @@
 
 ASERVER is a server that provides a RESTful Web Service API to the ACE database for agent information.
 
-#### Note: Data in this file are fake. Data are included here for documentation purposes only.
+#### Note: Data in this file are fake. Data is included for documentation purposes only.
 
 ### SSL Configuration
 1. ACE software uses SSL which requires a valid key and certificate
@@ -26,7 +26,7 @@ To install aserver, follow the README.md file in the autoinstall folder. The ins
 ## Configuration
 1. Copy config.json_TEMPLATE to config.json
 1. Insert values for the parameters below
-1. Values must be Encoded using base64 strings (example "port":8080 becomes "port":"ODA4MA=="), unless this is in development mode (see the clearText flag below).
+1. Values must be Encoded using Base64 encoding (example "port":8080 becomes "port":"ODA4MA=="), unless this is in development mode (see the clearText flag below).
 
 | Key         | Description |
 |-------------|-------------|
@@ -41,7 +41,7 @@ To install aserver, follow the README.md file in the autoinstall folder. The ins
 | https:private_key | The path to the SSL private key |
 | redis:host | The IP address of the Redis server |
 | redis:port | The port number of the Redis server |
-    
+
 #### Running the Server
 Usage:  
 node app.js [ port ]
@@ -82,7 +82,7 @@ _None_
 ### Data Params
 
 _None_
-    
+
 ### Success Response
 
 Code: 200
@@ -382,7 +382,7 @@ _None_
 
 Code: 200
 
-Content: 
+Content:
 
 ```
 {
@@ -455,7 +455,7 @@ _None_
 
 Code: 200
 
-Content: 
+Content:
 
 ```
 {
@@ -641,7 +641,7 @@ For example...
 	}]
 }
 ```
-    
+
 ### Success Response
 
 Code: 200
@@ -660,4 +660,4 @@ _Sent in Success Response_
 
 ### Sample Call
 
-`curl -k -H "Content-Type: application/json" -X POST -d '{"data":[{"username":"user0","password":"pass0","first_name":"Kevin","last_name":"Spacey","role":"administrator","phone":"000-000-0000","email":"admin0@portal.com","organization":"OrganizationAlpha","is_approved":1,"is_active":1,"extension_id":0,"queue_id":0,"queue2_id":1},{"username":"user1","password":"pass1","first_name":"Stephen","last_name":"Baldwin","role":"manager","phone":"111-111-111","email":"manager1@portal.com","organization":"OrganizationBeta","is_approved":0,"is_active":0,"extension_id":1,"queue_id":2,"queue2_id":3}]}' https://IP address:port/addAgents` 
+`curl -k -H "Content-Type: application/json" -X POST -d '{"data":[{"username":"user0","password":"pass0","first_name":"Kevin","last_name":"Spacey","role":"administrator","phone":"000-000-0000","email":"admin0@portal.com","organization":"OrganizationAlpha","is_approved":1,"is_active":1,"extension_id":0,"queue_id":0,"queue2_id":1},{"username":"user1","password":"pass1","first_name":"Stephen","last_name":"Baldwin","role":"manager","phone":"111-111-111","email":"manager1@portal.com","organization":"OrganizationBeta","is_approved":0,"is_active":0,"extension_id":1,"queue_id":2,"queue2_id":3}]}' https://IP address:port/addAgents`
