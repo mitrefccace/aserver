@@ -459,6 +459,7 @@ var appRouter = function (app, connection) {
      * @apiName Adds agent_data records
      * @apiGroup AddAgents
      * @apiVersion 1.0.0
+     * 
      *
      * @apiSuccessExample Success-Response
      *     HTTP/1.1 200 OK
@@ -580,6 +581,9 @@ var appRouter = function (app, connection) {
      * @apiName Update Layout Config
      * @apiGroup UpdateLayoutConfig
      * @apiVersion 1.0.0
+     * 
+     * @apiParam {String} agent_id CSR Agent ID Number from the Database
+     * @apiParam {JSON} layout Json layout configuration
      *
      * @apiSuccessExample Success-Response
      *     HTTP/1.1 200 OK
