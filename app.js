@@ -136,7 +136,7 @@ process.on('SIGINT', function () {
 function decodeBase64(encodedString) {
     var decodedString = null;
     if (clearText) {
-        decodedString = encodedString;
+        return encodedString;
     } else {
         decodedString = new Buffer(encodedString, 'base64');
     }
