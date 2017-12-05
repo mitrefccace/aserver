@@ -379,14 +379,14 @@ var appRouter = function (app, connection) {
      * @apiVersion 1.0.0
      *
      * @apiParam {String} agent_id CSR Agent ID Number from the Database
-     *	@apiParam {String} first_name First name of the CSR Agent user
-     *	@apiParam {String} last_name Last name of the CSR Agent user
-     *	@apiParam {String} role Role of the CSR Agent user
-     *	@apiParam {String} phone Phone number for the CSR Agent user
-     *	@apiParam {String} email Email address for the CSR Agent user
-     *	@apiParam {String} orgainization ORganization for the CSR Agent user
-     *	@apiParam {Boolean} is_approved A boolean value.
-     *	@apiParam {Boolean} is_active A boolean value.
+     * @apiParam {String} first_name First name of the CSR Agent user
+     * @apiParam {String} last_name Last name of the CSR Agent user
+     * @apiParam {String} role Role of the CSR Agent user
+     * @apiParam {String} phone Phone number for the CSR Agent user
+     * @apiParam {String} email Email address for the CSR Agent user
+     * @apiParam {String} orgainization ORganization for the CSR Agent user
+     * @apiParam {Boolean} is_approved A boolean value.
+     * @apiParam {Boolean} is_active A boolean value.
      *
      * @apiSuccessExample Success-Response
      *     HTTP/1.1 200 OK
@@ -572,6 +572,63 @@ var appRouter = function (app, connection) {
             return res.status(200).send({
                 'message': 'Success!'
             });
+    });
+
+
+
+
+    /**
+    /**
+     * @api {post} /DeleteAgent Deletes an Agent's information in the database.
+     * @apiName Delete an Agent Record
+     * @apiGroup DeleteAgent
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} agent_id CSR Agent ID Number from the Database
+     *
+     * @apiSuccessExample Success-Response
+     *     HTTP/1.1 200 OK
+     *    {
+     *      "message":"Success!"
+     *    }
+     * @apiErrorExample 400 Error-Response
+     *     HTTP/1.1 400 BAD Request
+     *     {
+     *        'message': 'Missing required field(s)'
+     *     }
+     *
+     * @apiErrorExample 500 Error-Response
+     *     HTTP/1.1 500 Internal Server Error
+     *     {
+     *        'message': 'MySQL error'
+     *     }
+     */
+     
+    app.post('/DeleteAgent', function (req, res) {
+        var agent_id = req.body.agent_id;
+        if (!agent_id) {
+            return res.status(400).send({
+                'message': 'Missing required field'
+            });
+        } else {
+            var query = 'DELETE FROM agent_data WHERE agent_id = ?';
+            connection.query(query, agent_id, function (err, results) {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send({
+                        'message': 'MySQL error'
+                    });
+                } else if (results.affectedRows > 0) {
+                    return res.status(200).send({
+                        'message': 'Success!'
+                    });
+                } else {
+                    return res.status(200).send({
+                        'message': 'Failed!'
+                    });
+                }
+            });
+        }
     });
 
 
