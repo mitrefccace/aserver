@@ -28,7 +28,7 @@ log4js.configure({
 // Get the name of the config file from the command line (optional)
 nconf.argv().env();
 
-cfile = 'config.json';
+cfile = '../dat/config.json';
 
 //Validate the incoming JSON config file
 try {
@@ -52,13 +52,13 @@ var configobj = JSON.parse(fs.readFileSync(cfile, 'utf8'));
 //the presence of the clearText field in config.json means that the file is in clear text
 //remove the field if the file is encoded
 var clearText = false;
-if (typeof (nconf.get('clearText')) !== "undefined") {
+if (typeof (nconf.get('common:cleartext')) !== "undefined") {
     console.log('clearText field is in config.json. assuming file is in clear text');
     clearText = true;
 }
 
 // Set log4js level from the config file
-logger.setLevel(decodeBase64(nconf.get('debuglevel')));
+logger.setLevel(decodeBase64(nconf.get('common:debug_level')));
 logger.trace('TRACE messages enabled.');
 logger.debug('DEBUG messages enabled.');
 logger.info('INFO messages enabled.');
@@ -82,10 +82,10 @@ clear(); // clear console
 
 // Create MySQL connection and connect to it
 var connection = mysql.createConnection({
-    host: decodeBase64(nconf.get('mysql:host')),
-    user: decodeBase64(nconf.get('mysql:user')),
-    password: decodeBase64(nconf.get('mysql:password')),
-    database: decodeBase64(nconf.get('mysql:database'))
+    host: decodeBase64(nconf.get('database_servers:mysql:host')),
+    user: decodeBase64(nconf.get('database_servers:mysql:user')),
+    password: decodeBase64(nconf.get('database_servers:mysql:password')),
+    database: decodeBase64(nconf.get('database_servers:mysql:agent_database_name'))
 });
 connection.connect();
 // Keeps connection from Inactivity Timeout
@@ -106,19 +106,19 @@ app.use(express.static(__dirname + '/apidoc'));
 */
 var routes = require('./routes/routes.js')(app, connection);
 
-if (decodeBase64(nconf.get('protocol')) === "https") {
+if (decodeBase64(nconf.get('agent_service:protocol')) === "https") {
     console.log("https");
     var credentials = {
-        key: fs.readFileSync(decodeBase64(nconf.get('https:private_key'))),
-        cert: fs.readFileSync(decodeBase64(nconf.get('https:certificate')))
+        key: fs.readFileSync(decodeBase64(nconf.get('common:https:private_key'))),
+        cert: fs.readFileSync(decodeBase64(nconf.get('common:https:certificate')))
     };
     var server = https.createServer(credentials, app);
 } else {
     var server = http.createServer(app);
 }
 
-server.listen(parseInt(decodeBase64(nconf.get('port'))));
-console.log(decodeBase64(nconf.get('protocol'))+' web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(decodeBase64(nconf.get('port'))));
+server.listen(parseInt(decodeBase64(nconf.get('agent_service:port'))));
+console.log(decodeBase64(nconf.get('agent_service:protocol'))+' web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(decodeBase64(nconf.get('agent_service:port'))));
 
 // Handle Ctrl-C (graceful shutdown)
 process.on('SIGINT', function () {
