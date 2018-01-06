@@ -85,7 +85,7 @@ var connection = mysql.createConnection({
     host: decodeBase64(nconf.get('database_servers:mysql:host')),
     user: decodeBase64(nconf.get('database_servers:mysql:user')),
     password: decodeBase64(nconf.get('database_servers:mysql:password')),
-    database: decodeBase64(nconf.get('database_servers:mysql:agent_database_name'))
+    database: decodeBase64(nconf.get('database_servers:mysql:database_name'))
 });
 connection.connect();
 // Keeps connection from Inactivity Timeout
