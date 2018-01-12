@@ -603,7 +603,7 @@ var appRouter = function (app, connection) {
      *        'message': 'MySQL error'
      *     }
      */
-     
+
     app.post('/DeleteAgent', function (req, res) {
         var agent_id = req.body.agent_id;
         if (!agent_id) {
@@ -689,6 +689,28 @@ var appRouter = function (app, connection) {
             });
         }
 
+    });
+
+    app.get('/OperatingHours', function (req, res) {
+        let startTime = '09:00';
+        let endTime = '16:00';
+        let isOpen = true;
+        let today = new Date();
+        
+        if (today.getHours() >= 9 && today.getHours() <= 16) {
+            isOpen = true
+        } else {
+            isOpen = false
+        }
+
+
+        return res.status(200).send({
+            'status': 'Success',
+            'start': startTime,
+            'end': endTime,
+            'current': today.toUTCString(),
+            'isOpen': isOpen
+        });
     });
 
 
