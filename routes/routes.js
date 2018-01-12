@@ -692,12 +692,12 @@ var appRouter = function (app, connection) {
     });
 
     app.get('/OperatingHours', function (req, res) {
-        let startTime = '09:00';
-        let endTime = '16:00';
+        let startTime = '14:00';
+        let endTime = '21:00';
         let isOpen = true;
         let today = new Date();
         
-        if (today.getHours() >= 9 && today.getHours() <= 16) {
+        if (today.getHours() >= 14 && today.getHours() <= 21) {
             isOpen = true
         } else {
             isOpen = false
