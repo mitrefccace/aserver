@@ -745,7 +745,7 @@ var appRouter = function (app, connection, asterisk) {
         });
     });
 
-    app.get('/OperatingHours', function (req, res) {
+    app.post('/OperatingHours', function (req, res) {
         let start = req.body.start;
         let end = req.body.end;
         if (start && end) {
