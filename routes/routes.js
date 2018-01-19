@@ -1,7 +1,3 @@
-import {
-    read
-} from "fs";
-
 /**
  * Define the different REST service routes in this file.
  *
@@ -721,7 +717,7 @@ var appRouter = function (app, connection, asterisk) {
             } else {
                 let startTime = result[0].start;
                 let endTime = result[0].end;
-                let forceOffHours = result[0].force_off_hours || false ;;
+                let forceOffHours = result[0].force_off_hours || false ;
 
                 responseJson.status = 'Success'
                 responseJson.message = 'Server responding with Start and End times.'
