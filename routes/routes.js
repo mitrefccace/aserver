@@ -1,3 +1,7 @@
+import {
+    read
+} from "fs";
+
 /**
  * Define the different REST service routes in this file.
  *
@@ -6,7 +10,7 @@
  * @returns (undefined) Not used
  */
 
-var appRouter = function (app, connection) {
+var appRouter = function (app, connection, asterisk) {
 
     /**
      * @api {get} /AgentVerify Verify an agent by username and password.
@@ -691,27 +695,106 @@ var appRouter = function (app, connection) {
 
     });
 
+
+    /*
+    INSERT INTO asterisk_operating_status (id, start, end)
+    VALUES (1, ?, ?)
+    ON DUPLICATE KEY UPDATE 
+    start=VALUES(start),
+    end=VALUES(end);
+    */
+
     app.get('/OperatingHours', function (req, res) {
-        let startTime = '14:00';
-        let endTime = '21:00';
-        let isOpen = true;
         let today = new Date();
-        
-        if (today.getHours() >= 14 && today.getHours() <= 21) {
-            isOpen = true
-        } else {
-            isOpen = false
+        let currentTime = parseFloat(today.getUTCHours() + '.' + today.getUTCMinutes());
+        let responseJson = {
+            "current": today
         }
+        let sqlQuery = 'SELECT id, start, end, force_off_hours FROM asterisk_operating_status WHERE id = 1;'
 
+        connection.query(sqlQuery, function (err, result) {
+            if (err) {
+                res.status(200).send({
+                    'status': 'Failure',
+                    'message': 'mysql Error'
+                });
+            } else {
+                let startTime = result[0].start;
+                let endTime = result[0].end;
+                let forceOffHours = result[0].force_off_hours || false ;;
 
-        return res.status(200).send({
-            'status': 'Success',
-            'start': startTime,
-            'end': endTime,
-            'current': today.toUTCString(),
-            'isOpen': isOpen
+                responseJson.status = 'Success'
+                responseJson.message = 'Server responding with Start and End times.'
+                responseJson.start = startTime;
+                responseJson.end = endTime;
+                responseJson.forceOffHours = forceOffHours;
+
+                let start = parseFloat(startTime.replace(":", "."));
+                let end = parseFloat(endTime.replace(":", "."));
+
+                if (end <= start)
+                    end = end + 24.00;
+
+                if (cTime < start)
+                    cTime = cTime + 24.00;
+
+                if (cTime >= start && cTime < end && !forceOffHours) {
+                    responseJson.isOpen = true;
+                } else {
+                    responseJson.isOpen = false;
+                }
+
+                res.status(200).send(responseJson);
+            }
         });
     });
+
+    app.get('/OperatingHours', function (req, res) {
+        let start = req.body.start;
+        let end = req.body.end;
+        if (start && end) {
+            let sqlQuery = 'INSERT INTO asterisk_operating_status (id, start, end) ' +
+                ' VALUES (1, ?, ?) ' +
+                ' ON DUPLICATE KEY UPDATE ' +
+                ' start=VALUES(start), ' +
+                ' end=VALUES(end);'
+
+            connection.query(sqlQuery, [start, end], function (err, result) {
+                if (err) {
+                    res.status(200).send({
+                        'status': 'Failure',
+                        'message': 'mysql Error'
+                    });
+                } else {
+                    ami.action({
+                        "Action": "DBPut",
+                        'family': 'BUSINESS_HOURS',
+                        'key': 'START',
+                        'val': start
+
+                    }, function (err, res) {});
+
+                    ami.action({
+                        "Action": "DBPut",
+                        'family': 'BUSINESS_HOURS',
+                        'key': 'END',
+                        'val': end
+
+                    }, function (err, res) {});
+
+                    res.status(200).send({
+                        'status': 'Success'
+                    });
+                }
+            });
+        } else {
+            res.status(400).send({
+                'status': 'Failure',
+                'message': 'Missing Parameters'
+            });
+        }
+    });
+
 
 
 };

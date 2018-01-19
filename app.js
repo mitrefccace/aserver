@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var fs = require('fs');
 var mysql = require('mysql');
+var asteriskManager = require('asterisk-manager');
 var clear = require('clear');
 var log4js = require('log4js');
 var nconf = require('nconf');
@@ -93,6 +94,12 @@ setInterval(function () {
     connection.ping();
 }, 60000);
 
+asterisk = new asteriskManager(parseInt(decodeBase64(nconf.get('asterisk:ami:port'))),
+decodeBase64(nconf.get('asterisk:sip:private_ip')),
+decodeBase64(nconf.get('asterisk:ami:id')),
+decodeBase64(nconf.get('asterisk:ami:passwd')), true);
+asterisk.keepConnected();
+
 // Start the server
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -104,7 +111,7 @@ app.use(express.static(__dirname + '/apidoc'));
     type: 'application/vnd/api+json'
 }));
 */
-var routes = require('./routes/routes.js')(app, connection);
+var routes = require('./routes/routes.js')(app, connection, asterisk);
 
 if (decodeBase64(nconf.get('agent_service:protocol')) === "https") {
     console.log("https");
