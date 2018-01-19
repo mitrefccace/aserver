@@ -717,7 +717,7 @@ var appRouter = function (app, connection, asterisk) {
             } else {
                 let startTime = result[0].start;
                 let endTime = result[0].end;
-                let forceOffHours = result[0].force_off_hours || false ;
+                let forceOffHours = result[0].force_off_hours || false;
 
                 responseJson.status = 'Success'
                 responseJson.message = 'Server responding with Start and End times.'
@@ -731,10 +731,10 @@ var appRouter = function (app, connection, asterisk) {
                 if (end <= start)
                     end = end + 24.00;
 
-                if (cTime < start)
-                    cTime = cTime + 24.00;
+                if (currentTime < start)
+                    currentTime = currentTime + 24.00;
 
-                if (cTime >= start && cTime < end && !forceOffHours) {
+                if (currentTime >= start && currentTime < end && !forceOffHours) {
                     responseJson.isOpen = true;
                 } else {
                     responseJson.isOpen = false;
