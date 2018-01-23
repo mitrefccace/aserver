@@ -762,7 +762,7 @@ var appRouter = function (app, connection, asterisk) {
                         'message': 'mysql Error'
                     });
                 } else {
-                    ami.action({
+                    asterisk.action({
                         "Action": "DBPut",
                         'family': 'BUSINESS_HOURS',
                         'key': 'START',
@@ -770,7 +770,7 @@ var appRouter = function (app, connection, asterisk) {
 
                     }, function (err, res) {});
 
-                    ami.action({
+                    asterisk.action({
                         "Action": "DBPut",
                         'family': 'BUSINESS_HOURS',
                         'key': 'END',
