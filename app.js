@@ -37,9 +37,12 @@ try {
     var myjson = JSON.parse(content);
     console.log("Valid JSON config file");
 } catch (ex) {
-    console.log("Error in " + cfile);
+    console.log("");
+    console.log("*******************************************************");
+    console.log("Error! Malformed configuration file: " + cfile);
     console.log('Exiting...');
-    console.log(ex);
+    console.log("*******************************************************");
+    console.log("");
     process.exit(1);
 }
 
@@ -59,7 +62,7 @@ if (typeof (nconf.get('common:cleartext')) !== "undefined"   && nconf.get('commo
 }
 
 // Set log4js level from the config file
-logger.setLevel(decodeBase64(nconf.get('common:debug_level')));
+logger.setLevel(getConfigVal('common:debug_level'));
 logger.trace('TRACE messages enabled.');
 logger.debug('DEBUG messages enabled.');
 logger.info('INFO messages enabled.');
@@ -83,10 +86,10 @@ clear(); // clear console
 
 // Create MySQL connection and connect to it
 var connection = mysql.createConnection({
-    host: decodeBase64(nconf.get('database_servers:mysql:host')),
-    user: decodeBase64(nconf.get('database_servers:mysql:user')),
-    password: decodeBase64(nconf.get('database_servers:mysql:password')),
-    database: decodeBase64(nconf.get('database_servers:mysql:ad_database_name'))
+    host: getConfigVal('database_servers:mysql:host'),
+    user: getConfigVal('database_servers:mysql:user'),
+    password: getConfigVal('database_servers:mysql:password'),
+    database: getConfigVal('database_servers:mysql:ad_database_name')
 });
 connection.connect();
 // Keeps connection from Inactivity Timeout
@@ -94,10 +97,10 @@ setInterval(function () {
     connection.ping();
 }, 60000);
 
-asterisk = new asteriskManager(parseInt(decodeBase64(nconf.get('asterisk:ami:port'))),
-decodeBase64(nconf.get('asterisk:sip:private_ip')),
-decodeBase64(nconf.get('asterisk:ami:id')),
-decodeBase64(nconf.get('asterisk:ami:passwd')), true);
+asterisk = new asteriskManager(parseInt(getConfigVal('asterisk:ami:port')),
+getConfigVal('asterisk:sip:private_ip'),
+getConfigVal('asterisk:ami:id'),
+getConfigVal('asterisk:ami:passwd'), true);
 asterisk.keepConnected();
 
 // Start the server
@@ -113,19 +116,19 @@ app.use(express.static(__dirname + '/apidoc'));
 */
 var routes = require('./routes/routes.js')(app, connection, asterisk);
 
-if (decodeBase64(nconf.get('agent_service:protocol')) === "https") {
+if (getConfigVal('agent_service:protocol') === "https") {
     console.log("https");
     var credentials = {
-        key: fs.readFileSync(decodeBase64(nconf.get('common:https:private_key'))),
-        cert: fs.readFileSync(decodeBase64(nconf.get('common:https:certificate')))
+        key: fs.readFileSync(getConfigVal('common:https:private_key')),
+        cert: fs.readFileSync(getConfigVal('common:https:certificate'))
     };
     var server = https.createServer(credentials, app);
 } else {
     var server = http.createServer(app);
 }
 
-server.listen(parseInt(decodeBase64(nconf.get('agent_service:port'))));
-console.log(decodeBase64(nconf.get('agent_service:protocol'))+' web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(decodeBase64(nconf.get('agent_service:port'))));
+server.listen(parseInt(getConfigVal('agent_service:port')));
+console.log(getConfigVal('agent_service:protocol')+' web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(getConfigVal('agent_service:port')));
 
 // Handle Ctrl-C (graceful shutdown)
 process.on('SIGINT', function () {
@@ -134,18 +137,30 @@ process.on('SIGINT', function () {
     process.exit(0);
 });
 
-
 /**
- * Function to decode the Base64 configuration file parameters.
- * @param {type} encodedString Base64 encoded string.
+ * Function to verify the config parameter name and
+ * decode it from Base64 (if necessary).
+ * @param {type} param_name of the config parameter
  * @returns {unresolved} Decoded readable string.
  */
-function decodeBase64(encodedString) {
+function getConfigVal(param_name) {
+  var val = nconf.get(param_name);
+  if (typeof val !== 'undefined' && val !== null) {
+    //found value for param_name
     var decodedString = null;
     if (clearText) {
-        return encodedString;
+      decodedString = val;
     } else {
-        decodedString = new Buffer(encodedString, 'base64');
+      decodedString = new Buffer(val, 'base64');
     }
-    return (decodedString.toString());
+  } else {
+    //did not find value for param_name
+    logger.error('');
+    logger.error('*******************************************************');
+    logger.error('ERROR!!! Config parameter is missing: ' + param_name);
+    logger.error('*******************************************************');
+    logger.error('');
+    decodedString = "";
+  }
+  return (decodedString.toString());
 }
