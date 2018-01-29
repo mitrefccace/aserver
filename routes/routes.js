@@ -702,7 +702,7 @@ var appRouter = function (app, connection, asterisk) {
 
     app.get('/OperatingHours', function (req, res) {
         let today = new Date();
-        let currentTime = parseFloat(today.getUTCHours() + '.' + today.getUTCMinutes());
+        let currentTime = parseFloat(today.getUTCHours() + '.' + (today.getUTCMinutes() < 10? '0' : '') + today.getUTCMinutes() );
         let responseJson = {
             "current": today
         }
