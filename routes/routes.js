@@ -363,7 +363,7 @@ var appRouter = function (app, connection, asterisk) {
 
     /*
      * This is just for testing the connection, no APIdoc info required.
-     * GET request; e.g. http://localhost:8085/
+     * GET request; e.g. https://localhost:8085/
      */
 
     app.get('/', function (req, res) {

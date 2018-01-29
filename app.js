@@ -1,6 +1,5 @@
 // This is the main JS for the USERVER RESTFul server
 var https = require('https');
-var http = require('http');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
@@ -115,20 +114,14 @@ app.use(express.static(__dirname + '/apidoc'));
 }));
 */
 var routes = require('./routes/routes.js')(app, connection, asterisk);
-
-if (getConfigVal('agent_service:protocol') === "https") {
-    console.log("https");
-    var credentials = {
-        key: fs.readFileSync(getConfigVal('common:https:private_key')),
-        cert: fs.readFileSync(getConfigVal('common:https:certificate'))
-    };
-    var server = https.createServer(credentials, app);
-} else {
-    var server = http.createServer(app);
-}
+var credentials = {
+  key: fs.readFileSync(getConfigVal('common:https:private_key')),
+  cert: fs.readFileSync(getConfigVal('common:https:certificate'))
+};
+var server = https.createServer(credentials, app);
 
 server.listen(parseInt(getConfigVal('agent_service:port')));
-console.log(getConfigVal('agent_service:protocol')+' web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(getConfigVal('agent_service:port')));
+console.log('https web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(getConfigVal('agent_service:port')));
 
 // Handle Ctrl-C (graceful shutdown)
 process.on('SIGINT', function () {
