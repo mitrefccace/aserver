@@ -692,21 +692,13 @@ var appRouter = function (app, connection, asterisk) {
     });
 
 
-    /*
-    INSERT INTO asterisk_operating_status (id, start, end)
-    VALUES (1, ?, ?)
-    ON DUPLICATE KEY UPDATE 
-    start=VALUES(start),
-    end=VALUES(end);
-    */
-
     app.get('/OperatingHours', function (req, res) {
         let today = new Date();
         let currentTime = parseFloat(today.getUTCHours() + '.' + (today.getUTCMinutes() < 10? '0' : '') + today.getUTCMinutes() );
         let responseJson = {
             "current": today
         }
-        let sqlQuery = 'SELECT id, start, end, force_off_hours FROM asterisk_operating_status WHERE id = 1;'
+        let sqlQuery = 'SELECT id, start, end, business_mode FROM asterisk_operating_status WHERE id = 1;'
 
         connection.query(sqlQuery, function (err, result) {
             if (err) {
@@ -717,13 +709,13 @@ var appRouter = function (app, connection, asterisk) {
             } else {
                 let startTime = result[0].start;
                 let endTime = result[0].end;
-                let forceOffHours = result[0].force_off_hours || false;
+                let business_mode = result[0].business_mode || 1;
 
                 responseJson.status = 'Success'
                 responseJson.message = 'Server responding with Start and End times.'
                 responseJson.start = startTime;
                 responseJson.end = endTime;
-                responseJson.forceOffHours = forceOffHours;
+                responseJson.business_mode = business_mode;
 
                 let start = parseFloat(startTime.replace(":", "."));
                 let end = parseFloat(endTime.replace(":", "."));
@@ -734,7 +726,7 @@ var appRouter = function (app, connection, asterisk) {
                 if (currentTime < start)
                     currentTime = currentTime + 24.00;
 
-                if (currentTime >= start && currentTime < end && !forceOffHours) {
+                if ((currentTime >= start && currentTime < end && business_mode != 2) || business_mode == 1) {
                     responseJson.isOpen = true;
                 } else {
                     responseJson.isOpen = false;
@@ -744,16 +736,18 @@ var appRouter = function (app, connection, asterisk) {
             }
         });
     });
-
+    
     app.post('/OperatingHours', function (req, res) {
         let start = req.body.start;
         let end = req.body.end;
+        let business_mode = req.body.business_mode || 1;
         if (start && end) {
-            let sqlQuery = 'INSERT INTO asterisk_operating_status (id, start, end) ' +
-                ' VALUES (1, ?, ?) ' +
+            let sqlQuery = 'INSERT INTO asterisk_operating_status (id, start, end, business_mode) ' +
+                ' VALUES (1, ?, ?, ?) ' +
                 ' ON DUPLICATE KEY UPDATE ' +
                 ' start=VALUES(start), ' +
-                ' end=VALUES(end);'
+                ' end=VALUES(end), '+
+                ' business_mode=VALUES(business_mode);'
 
             connection.query(sqlQuery, [start, end], function (err, result) {
                 if (err) {
@@ -762,6 +756,7 @@ var appRouter = function (app, connection, asterisk) {
                         'message': 'mysql Error'
                     });
                 } else {
+                    
                     asterisk.action({
                         "Action": "DBPut",
                         'family': 'BUSINESS_HOURS',
@@ -775,6 +770,14 @@ var appRouter = function (app, connection, asterisk) {
                         'family': 'BUSINESS_HOURS',
                         'key': 'END',
                         'val': end
+
+                    }, function (err, res) {});
+
+                    asterisk.action({
+                        "Action": "DBPut",
+                        'family': 'BUSINESS_HOURS',
+                        'key': 'ACTIVE',
+                        'val': business_mode
 
                     }, function (err, res) {});
 
