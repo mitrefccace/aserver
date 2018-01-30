@@ -740,7 +740,7 @@ var appRouter = function (app, connection, asterisk) {
     app.post('/OperatingHours', function (req, res) {
         let start = req.body.start;
         let end = req.body.end;
-        let business_mode = req.body.business_mode || 1;
+        let business_mode = req.body.business_mode || 0;
         if (start && end) {
             let sqlQuery = 'INSERT INTO asterisk_operating_status (id, start, end, business_mode) ' +
                 ' VALUES (1, ?, ?, ?) ' +
