@@ -709,7 +709,7 @@ var appRouter = function (app, connection, asterisk) {
             } else {
                 let startTime = result[0].start;
                 let endTime = result[0].end;
-                let business_mode = result[0].business_mode || 1;
+                let business_mode = result[0].business_mode || 0;
 
                 responseJson.status = 'Success'
                 responseJson.message = 'Server responding with Start and End times.'
