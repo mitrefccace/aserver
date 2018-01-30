@@ -736,7 +736,7 @@ var appRouter = function (app, connection, asterisk) {
             }
         });
     });
-    
+
     app.post('/OperatingHours', function (req, res) {
         let start = req.body.start;
         let end = req.body.end;
@@ -749,7 +749,7 @@ var appRouter = function (app, connection, asterisk) {
                 ' end=VALUES(end), '+
                 ' business_mode=VALUES(business_mode);'
 
-            connection.query(sqlQuery, [start, end], function (err, result) {
+            connection.query(sqlQuery, [start, end, business_mode], function (err, result) {
                 if (err) {
                     res.status(200).send({
                         'status': 'Failure',
@@ -799,3 +799,16 @@ var appRouter = function (app, connection, asterisk) {
 };
 
 module.exports = appRouter;
+
+
+SyntaxError: Unexpected token s 
+at parse (/home/centos/aserver/node_modules/body-parser/lib/types/json.js:83:15)
+at /home/centos/aserver/node_modules/body-parser/lib/read.js:116:18
+at invokeCallback (/home/centos/aserver/node_modules/raw-body/index.js:262:16)
+at done (/home/centos/aserver/node_modules/raw-body/index.js:251:7)
+at IncomingMessage.onEnd (/home/centos/aserver/node_modules/raw-body/index.js:307:7)
+at emitNone (events.js:86:13)
+at IncomingMessage.emit (events.js:185:7)
+at endReadableNT (_stream_readable.js:974:12)
+at _combinedTickCallback (internal/process/next_tick.js:74:11)
+at process._tickDomainCallback (internal/process/next_tick.js:122:9)
