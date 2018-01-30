@@ -728,8 +728,10 @@ var appRouter = function (app, connection, asterisk) {
 
                 if ((currentTime >= start && currentTime < end && business_mode != 2) || business_mode == 1) {
                     responseJson.isOpen = true;
-                } else {
+                } else if (business_mode == 2) {
                     responseJson.isOpen = false;
+                } else {
+                    responseJson.isOpen = true;
                 }
 
                 res.status(200).send(responseJson);
