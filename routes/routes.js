@@ -799,16 +799,3 @@ var appRouter = function (app, connection, asterisk) {
 };
 
 module.exports = appRouter;
-
-
-SyntaxError: Unexpected token s 
-at parse (/home/centos/aserver/node_modules/body-parser/lib/types/json.js:83:15)
-at /home/centos/aserver/node_modules/body-parser/lib/read.js:116:18
-at invokeCallback (/home/centos/aserver/node_modules/raw-body/index.js:262:16)
-at done (/home/centos/aserver/node_modules/raw-body/index.js:251:7)
-at IncomingMessage.onEnd (/home/centos/aserver/node_modules/raw-body/index.js:307:7)
-at emitNone (events.js:86:13)
-at IncomingMessage.emit (events.js:185:7)
-at endReadableNT (_stream_readable.js:974:12)
-at _combinedTickCallback (internal/process/next_tick.js:74:11)
-at process._tickDomainCallback (internal/process/next_tick.js:122:9)
