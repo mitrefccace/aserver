@@ -8,7 +8,7 @@ ASERVER is a server that provides a RESTful Web Service API to the ACE database 
 
 ### SSL Configuration
 1. ACE software uses SSL which requires a valid key and certificate
-1. The location of the SSL key and certificate can be specified in the config.json by using the https:certificate and https:private_key parameters in the form of folder/file (e.g., ssl/mycert.pem and ssl/mykey.pem)
+1. The location of the SSL key and certificate can be specified in the dat/config.json by using the common:https:certificate and common:https:private_key parameters in the form of folder/file (e.g., /home/centos/ssl/mycert.pem and /home/centos/ssl/mykey.pem)
 1. Additional information can be found in the ACE Direct Platform Release document
 
 ### Getting Started
