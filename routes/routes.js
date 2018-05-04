@@ -477,6 +477,19 @@ var appRouter = function (app, connection, asterisk) {
      
      {
           "data": [{
+              "username": "<insert username>",
+              "password": "<insert password>",
+              "first_name": "<insert fname>",
+              "last_name": "<insert lname>",
+              "role": "<insert role>",
+              "phone": "<insert phone>",
+              "email": "<insert email>",
+              "organization": "<insert organization>",
+              "is_approved": 0,
+              "is_active": 0,
+              "extension_id": 0,
+              "queue_id": 0,
+              "queue2_id": 0
           }, {
               "username": "<insert username>",
               "password": "<insert password>",
