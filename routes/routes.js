@@ -524,56 +524,49 @@ var appRouter = function (app, connection, asterisk) {
      */
     app.post('/addAgents', function (req, res) {
         var agents = req.body.data;
+        var sqlInsert = "INSERT INTO agent_data (username, password, first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id) VALUES ?;"
+        var values = [];
 
-        var merrors = '';
-        var oerrors = '';
-        var i = 0;
-        for (var rec of req.body.data) {
+        for (var rec of agents) {
+            let username = rec.username;
+            let password = rec.password;
+            let first_name = rec.first_name;
+            let last_name = rec.last_name;
+            let role = rec.role;
+            let phone = rec.phone;
+            let email = rec.emai;
+            let organization = rec.organization;
+            let is_approved = rec.is_approved || 0;
+            let is_active = rec.is_active || 0;
+            let extension_id = rec.extension_id || 'NULL';
+            let queue_id = rec.queue_id || 'NULL';
+            let queue2_id = rec.queue2_id || 'NULL';
 
-            var query = 'INSERT INTO `agent_data` SET ' +
-                '  username = ?' +
-                ', password = ?' +
-                ', first_name = ?' +
-                ', last_name = ?' +
-                ', role = ?' +
-                ', phone = ?' +
-                ', email = ?' +
-                ', organization = ?' +
-                ', is_approved = ?' +
-                ', is_active = ?' +
-                ', extension_id = ?' +
-                ', queue_id = ?' +
-                ', queue2_id = ?';
-
-            connection.query(query, [rec.username, rec.password, rec.first_name, rec.last_name, rec.role, rec.phone, rec.email, rec.organization, rec.is_approved, rec.is_active, rec.extension_id, rec.queue_id, rec.queue2_id], function (err, results) {
-                if (err) {
-                    merrors = merrors + rec.username + ' ';
-                } else if (results.affectedRows > 0) {;
-                } else {
-                    oerrors = oerrors + i + ' ';
-                }
-            });
-            i = i + 1;
+            values.push([username, password, first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id]);
         }
 
-        var errormsg = '';
-        if (merrors.length > 0) {
-            errormsg += 'MySQL errors: ' + merrors + '. ';
-        }
-        if (oerrors.length > 0) {
-            errormsg += 'Record errors: ' + oerrors + '. ';
-        }
-
-        if (errormsg.length > 0)
-            return res.status(200).send({
-                'message': errormsg
-            });
-        else
-            return res.status(200).send({
-                'message': 'Success!'
-            });
+        connection.query(sqlInsert, [values], function (err, results) {
+            if (err) {
+                //an mysql error occurred
+                res.status(200).send({
+                    'status': 'Failure',
+                    'message': 'mysql Error'
+                });
+            } else if (results.affectedRows == 0) {
+                // no mysql error but insert failed
+                res.status(200).send({
+                    'status': 'Failure',
+                    'message': 'No records created'
+                })
+            } else {
+                // insert was successful
+                res.status(200).send({
+                    'status': 'Success',
+                    'message': results.affectedRows + ' of ' + values.length + 'records created.'
+                })
+            }
+        });
     });
-
 
 
 
