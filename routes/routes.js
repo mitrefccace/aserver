@@ -148,7 +148,7 @@ var appRouter = function (app, connection, asterisk) {
 
     app.get('/getallagentrecs', function (req, res) {
         //Query DB for all agent records
-        connection.query('SELECT ad.agent_id, ad.username, ad.first_name, ad.last_name, ad.role, ad.phone, ad.email, ad.organization, ad.is_approved, ad.is_active, ae.extension, ae.extension_secret, aq.queue_name, aq2.queue_name AS queue2_name, oc.channel FROM agent_data AS ad LEFT JOIN asterisk_extensions AS ae ON ad.agent_id = ae.id LEFT JOIN asterisk_queues AS aq ON aq.id = ad.queue_id LEFT JOIN asterisk_queues AS aq2 ON aq2.id = ad.queue2_id LEFT JOIN outgoing_channels AS oc ON oc.id = ae.id ORDER BY agent_id', function (err, rows, fields) {
+        connection.query('SELECT ad.agent_id, ad.username, ad.first_name, ad.last_name, ad.role, ad.phone, ad.email, ad.organization, ad.is_approved, ad.is_active, ae.extension, ae.extension_secret, aq.queue_name, aq2.queue_name AS queue2_name, oc.channel FROM agent_data AS ad LEFT JOIN asterisk_extensions AS ae ON ad.extension_id = ae.id LEFT JOIN asterisk_queues AS aq ON aq.id = ad.queue_id LEFT JOIN asterisk_queues AS aq2 ON aq2.id = ad.queue2_id LEFT JOIN outgoing_channels AS oc ON oc.id = ae.id ORDER BY agent_id', function (err, rows, fields) {
             if (err) {
                 console.log(err);
                 return res.status(500).send({
@@ -211,7 +211,7 @@ var appRouter = function (app, connection, asterisk) {
      */
     app.get('/getagentrec/:username', function (req, res) {
         //Query DB for an agent record
-        connection.query('SELECT ad.agent_id, ad.username, ad.first_name, ad.last_name, ad.role, ad.phone, ad.email, ad.organization, ad.is_approved, ad.is_active, ae.extension, ae.extension_secret, aq.queue_name,  ad.layout, aq2.queue_name AS queue2_name, oc.channel FROM agent_data AS ad LEFT JOIN asterisk_extensions AS ae ON ad.agent_id = ae.id LEFT JOIN asterisk_queues AS aq ON aq.id = ad.queue_id LEFT JOIN asterisk_queues AS aq2 ON aq2.id = ad.queue2_id LEFT JOIN outgoing_channels AS oc ON oc.id = ae.id WHERE ad.username =  ?', [req.params.username], function (err, rows, fields) {
+        connection.query('SELECT ad.agent_id, ad.username, ad.first_name, ad.last_name, ad.role, ad.phone, ad.email, ad.organization, ad.is_approved, ad.is_active, ae.extension, ae.extension_secret, aq.queue_name,  ad.layout, aq2.queue_name AS queue2_name, oc.channel FROM agent_data AS ad LEFT JOIN asterisk_extensions AS ae ON ad.extension_id = ae.id LEFT JOIN asterisk_queues AS aq ON aq.id = ad.queue_id LEFT JOIN asterisk_queues AS aq2 ON aq2.id = ad.queue2_id LEFT JOIN outgoing_channels AS oc ON oc.id = ae.id WHERE ad.username =  ?', [req.params.username], function (err, rows, fields) {
             if (err) {
                 console.log(err);
                 return res.status(500).send({
@@ -417,11 +417,38 @@ var appRouter = function (app, connection, asterisk) {
         var organization = req.body.organization;
         var is_approved = Boolean(req.body.is_approved);
         var is_active = Boolean(req.body.is_active);
-        if (!agent_id || !first_name || !last_name || !role || !phone || !email || !organization || isNaN(is_approved) || isNaN(is_active)) {
+	var extension = req.body.extension;
+	var queue_id = req.body.queue_id;
+	var queue2_id = req.body.queue2_id;
+
+        if (!agent_id || !first_name || !last_name || !role || !phone || !email || !organization || isNaN(is_approved) || isNaN(is_active) || isNaN(extension)) {
             return res.status(400).send({
                 'message': 'Missing required field(s)'
             });
         } else {
+	
+	var extension_id = 'NULL';
+	var extensionLookup = new Promise(
+		function (resolve, reject) {
+			// translate extension into extension_id
+			var ext_query = 'select a.id from asterisk_extensions AS a where a.extension=?';
+			connection.query(ext_query, extension, function (err, rows, fields) {
+				if (err) {
+				    console.log(err);
+				    reject("Extension not in asterisk_extensions table");
+				} else if (rows.length > 0) {
+					console.log(JSON.stringify(rows));
+					extension_id = rows[0].id;
+					console.log('extension_id after query is: ' + extension_id);
+					resolve(extension_id);
+				} else {
+				    console.log('extension not found in asterisk_extensions table');
+				    resolve(extension_id);
+				}
+			    })
+		});
+
+	extensionLookup.then(function (extension_id) {
             var query = 'UPDATE agent_data SET first_name = ?' +
                 ', last_name = ?' +
                 ', role = ?' +
@@ -430,9 +457,12 @@ var appRouter = function (app, connection, asterisk) {
                 ', organization = ?' +
                 ', is_approved = ?' +
                 ', is_active = ?' +
+		', extension_id = ?' +
+		', queue_id = ?' +
+		', queue2_id = ?' +
                 ' WHERE agent_id = ?';
             // Query for all records sorted by the id
-            connection.query(query, [first_name, last_name, role, phone, email, organization, is_approved, is_active, agent_id], function (err, results) {
+            connection.query(query, [first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id, agent_id], function (err, results) {
                 if (err) {
                     console.log(err);
                     return res.status(500).send({
@@ -448,7 +478,14 @@ var appRouter = function (app, connection, asterisk) {
                     });
                 }
             });
-        }
+	},
+	function (error) {
+		return res.status(200).send({
+			'message': error
+		})
+	})
+
+      }
 
     });
 
@@ -526,7 +563,7 @@ var appRouter = function (app, connection, asterisk) {
         var agents = req.body.data;
         var sqlInsert = "INSERT INTO agent_data (username, password, first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id) VALUES ?;"
         var values = [];
-
+	
         for (var rec of agents) {
             let username = rec.username;
             let password = rec.password;
@@ -538,35 +575,66 @@ var appRouter = function (app, connection, asterisk) {
             let organization = rec.organization;
             let is_approved = rec.is_approved || 0;
             let is_active = rec.is_active || 0;
-            let extension_id = rec.extension_id || 'NULL';
+            let extension_id = 'NULL';
             let queue_id = rec.queue_id || 'NULL';
             let queue2_id = rec.queue2_id || 'NULL';
 
-            values.push([username, password, first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id]);
-        }
+	var extensionLookup = new Promise(
+		function (resolve, reject) {
+			// translate extension into extension_id
+			var ext_query = 'select a.id from asterisk_extensions AS a where a.extension=?';
+			connection.query(ext_query, rec.extension_id, function (err, rows, fields) {
+				if (err) {
+				    console.log(err);
+				    reject("Extension not in asterisk_extensions table");
+				} else if (rows.length > 0) {
+					console.log(JSON.stringify(rows));
+					extension_id = rows[0].id;
+					console.log('extension_id after query is: ' + extension_id);
+					resolve(extension_id);
+				} else {
+				    console.log('extension not found in asterisk_extensions table');
+				    resolve(extension_id);
+				}
+			    })
+		});
 
-        connection.query(sqlInsert, [values], function (err, results) {
-            if (err) {
-                //an mysql error occurred
-                res.status(200).send({
-                    'status': 'Failure',
-                    'message': 'mysql Error'
-                });
-            } else if (results.affectedRows == 0) {
-                // no mysql error but insert failed
-                res.status(200).send({
-                    'status': 'Failure',
-                    'message': 'No records created'
-                })
-            } else {
-                // insert was successful
-                res.status(200).send({
-                    'status': 'Success',
-                    'message': results.affectedRows + ' of ' + values.length + 'records created.'
-                })
-            }
-        });
-    });
+	extensionLookup.then(function (extension_id) {
+
+            	values.push([username, password, first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id]);
+
+		console.log('values used in sqlinsert: ' + values);
+
+		connection.query(sqlInsert, [values], function (err, results) {
+		    if (err) {
+			//an mysql error occurred
+			res.status(200).send({
+			    'status': 'Failure',
+			    'message': 'mysql Error'
+			});
+		    } else if (results.affectedRows == 0) {
+			// no mysql error but insert failed
+			res.status(200).send({
+			    'status': 'Failure',
+			    'message': 'No records created'
+			})
+		    } else {
+			// insert was successful
+			res.status(200).send({
+			    'status': 'Success',
+			    'message': results.affectedRows + ' of ' + values.length + 'records created.'
+			})
+		    }
+		});
+		},
+		function(error) {
+			res.status(200).send({
+			    'status': 'Failure',
+			    'message': error
+			})
+		});
+	}
+   });
 
 
 

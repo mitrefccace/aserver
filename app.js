@@ -61,7 +61,8 @@ if (typeof (nconf.get('common:cleartext')) !== "undefined"   && nconf.get('commo
 }
 
 // Set log4js level from the config file
-logger.setLevel(getConfigVal('common:debug_level'));
+var debug_level = getConfigVal('common:debug_level');
+logger.setLevel(debug_level);
 logger.trace('TRACE messages enabled.');
 logger.debug('DEBUG messages enabled.');
 logger.info('INFO messages enabled.');
@@ -70,7 +71,10 @@ logger.error('ERROR messages enabled.');
 logger.fatal('FATAL messages enabled.');
 logger.info('Using config file: ' + cfile);
 
-
+if (debug_level === "DEBUG") {
+    console.log("Express debugging on!");
+    app.use(morgan('dev'));
+}
 
 // process arguments - user supplied port number?
 /* var PORT;
@@ -103,7 +107,6 @@ getConfigVal('asterisk:ami:passwd'), true);
 asterisk.keepConnected();
 
 // Start the server
-app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
