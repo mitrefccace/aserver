@@ -9,7 +9,6 @@ var asteriskManager = require('asterisk-manager');
 var clear = require('clear');
 var log4js = require('log4js');
 var nconf = require('nconf');
-var morgan = require('morgan');
 var cfile = null;
 
 // Initialize log4js
@@ -73,7 +72,6 @@ logger.info('Using config file: ' + cfile);
 
 if (debug_level === "DEBUG") {
     console.log("Express debugging on!");
-    app.use(morgan('dev'));
 }
 
 // process arguments - user supplied port number?
