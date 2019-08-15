@@ -9,20 +9,28 @@ var asteriskManager = require('asterisk-manager');
 var clear = require('clear');
 var log4js = require('log4js');
 var nconf = require('nconf');
+var morgan = require('morgan');
 var cfile = null;
 
 // Initialize log4js
-log4js.loadAppender('file');
 var logname = 'aserver';
 log4js.configure({
-    appenders: [{
+    appenders: {
+      aserver: {
         type: 'dateFile',
         filename: 'logs/' + logname + '.log',
         alwaysIncludePattern: false,
         maxLogSize: 20480,
         backups: 10
-    }]
-});
+      }
+    },
+    categories: {
+      default: {
+        appenders: ['aserver'],
+        level: 'error'
+      }
+    }
+  })
 
 // Get the name of the config file from the command line (optional)
 nconf.argv().env();
@@ -44,7 +52,7 @@ try {
     process.exit(1);
 }
 
-var logger = log4js.getLogger(logname);
+var logger = log4js.getLogger('aserver');
 
 nconf.file({
     file: cfile
@@ -61,7 +69,7 @@ if (typeof (nconf.get('common:cleartext')) !== "undefined"   && nconf.get('commo
 
 // Set log4js level from the config file
 var debug_level = getConfigVal('common:debug_level');
-logger.setLevel(debug_level);
+logger.level = debug_level;
 logger.trace('TRACE messages enabled.');
 logger.debug('DEBUG messages enabled.');
 logger.info('INFO messages enabled.');
@@ -72,6 +80,7 @@ logger.info('Using config file: ' + cfile);
 
 if (debug_level === "DEBUG") {
     console.log("Express debugging on!");
+    app.use(morgan('dev'));
 }
 
 // process arguments - user supplied port number?

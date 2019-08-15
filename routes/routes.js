@@ -426,7 +426,7 @@ var appRouter = function (app, connection, asterisk) {
                 'message': 'Missing required field(s)'
             });
         } else {
-	
+
 	var extension_id = 'NULL';
 	var extensionLookup = new Promise(
 		function (resolve, reject) {
@@ -496,7 +496,7 @@ var appRouter = function (app, connection, asterisk) {
      * @apiName Adds agent_data records
      * @apiGroup AddAgents
      * @apiVersion 1.0.0
-     * 
+     *
      *
      * @apiSuccessExample Success-Response
      *     HTTP/1.1 200 OK
@@ -511,7 +511,7 @@ var appRouter = function (app, connection, asterisk) {
      */
     /*
      Expected Input json:
-     
+
      {
           "data": [{
               "username": "<insert username>",
@@ -557,13 +557,13 @@ var appRouter = function (app, connection, asterisk) {
               "queue2_id": 0
           }]
       }
-     
+
      */
     app.post('/addAgents', function (req, res) {
         var agents = req.body.data;
         var sqlInsert = "INSERT INTO agent_data (username, password, first_name, last_name, role, phone, email, organization, is_approved, is_active, extension_id, queue_id, queue2_id) VALUES ?;"
         var values = [];
-	
+
         for (var rec of agents) {
             let username = rec.username;
             let password = rec.password;
@@ -695,11 +695,11 @@ var appRouter = function (app, connection, asterisk) {
 
     /**
      * @api {post} /updateLayoutConfig UPDATES the layout column in the agent_data table. Layout controls the size and location of boxes on agent page.
-     *                        
+     *
      * @apiName Update Layout Config
      * @apiGroup UpdateLayoutConfig
      * @apiVersion 1.0.0
-     * 
+     *
      * @apiParam {String} agent_id CSR Agent ID Number from the Database
      * @apiParam {JSON} layout Json layout configuration
      *
@@ -819,7 +819,7 @@ var appRouter = function (app, connection, asterisk) {
                         'message': 'mysql Error'
                     });
                 } else {
-                    
+
                     asterisk.action({
                         "Action": "DBPut",
                         'family': 'BUSINESS_HOURS',
