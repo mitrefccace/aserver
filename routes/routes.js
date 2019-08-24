@@ -752,52 +752,55 @@ var appRouter = function (app, connection, asterisk) {
 
     });
 
+    app.get('/operatinghours', function (req, res) {
+      let today = new Date();
+      let currentTime = parseFloat(today.getUTCHours() + '.' + (today.getUTCMinutes() < 10? '0' : '') + today.getUTCMinutes() );
+      let responseJson = {
+          "current": today
+      }
+      let sqlQuery = 'SELECT id, start, end, business_mode FROM asterisk_operating_status WHERE id = 1;'
 
-    app.get('/OperatingHours', function (req, res) {
-        let today = new Date();
-        let currentTime = parseFloat(today.getUTCHours() + '.' + (today.getUTCMinutes() < 10? '0' : '') + today.getUTCMinutes() );
-        let responseJson = {
-            "current": today
-        }
-        let sqlQuery = 'SELECT id, start, end, business_mode FROM asterisk_operating_status WHERE id = 1;'
+      connection.query(sqlQuery, function (err, result) {
+          if (err) {
+              res.status(200).send({
+                  'status': 'Failure',
+                  'message': 'mysql Error'
+              });
+          } else {
+              let startTime = result[0].start;
+              let endTime = result[0].end;
+              let business_mode = result[0].business_mode || 0;
 
-        connection.query(sqlQuery, function (err, result) {
-            if (err) {
-                res.status(200).send({
-                    'status': 'Failure',
-                    'message': 'mysql Error'
-                });
-            } else {
-                let startTime = result[0].start;
-                let endTime = result[0].end;
-                let business_mode = result[0].business_mode || 0;
+              responseJson.status = 'Success'
+              responseJson.message = 'Server responding with Start and End times.'
+              responseJson.start = startTime;
+              responseJson.end = endTime;
+              responseJson.business_mode = business_mode;
 
-                responseJson.status = 'Success'
-                responseJson.message = 'Server responding with Start and End times.'
-                responseJson.start = startTime;
-                responseJson.end = endTime;
-                responseJson.business_mode = business_mode;
+              let start = parseFloat(startTime.replace(":", "."));
+              let end = parseFloat(endTime.replace(":", "."));
 
-                let start = parseFloat(startTime.replace(":", "."));
-                let end = parseFloat(endTime.replace(":", "."));
+              start = Number(start);
+              end = Number(end);
+              currentTime = Number(currentTime);
+              business_mode = Number(business_mode);
 
-                if (end <= start)
-                    end = end + 24.00;
-
-                if (currentTime < start)
-                    currentTime = currentTime + 24.00;
-
-                if ((currentTime >= start && currentTime < end && business_mode != 2) || business_mode == 1) {
-                    responseJson.isOpen = true;
-                } else if (business_mode == 2) {
-                    responseJson.isOpen = false;
-                } else {
-                    responseJson.isOpen = true;
+              /*
+               * business mode 0 = use hours of operation
+               * business mode 1 = Always Open
+               * business mode 2 = Always Closed
+              */
+              responseJson.isOpen = false;
+              if (business_mode == 1) {
+                responseJson.isOpen = true;
+              } else if (business_mode == 0) {
+                if (currentTime >= start && currentTime < end) {
+                  responseJson.isOpen = true;
                 }
-
-                res.status(200).send(responseJson);
-            }
-        });
+              }
+              res.status(200).send(responseJson);
+          }
+      });
     });
 
     app.post('/OperatingHours', function (req, res) {
