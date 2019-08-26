@@ -785,6 +785,15 @@ var appRouter = function (app, connection, asterisk) {
               currentTime = Number(currentTime);
               business_mode = Number(business_mode);
 
+              if (start > end) {
+                //we pass midnight (00:00) during operating hours
+                //if currentTime is between midnight and end, then add 24 to it
+                if (currentTime >= 0 && currentTime <= end) {
+                  currentTime = currentTime + 24.0;
+                }
+                end = end + 24.0;
+              }
+
               /*
                * business mode 0 = use hours of operation
                * business mode 1 = Always Open
