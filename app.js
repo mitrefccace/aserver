@@ -140,6 +140,15 @@ process.on('SIGINT', function () {
     process.exit(0);
 });
 
+//graceful shutdown, especially with node restarts
+process.on('exit', function() {
+  console.log('exit caught');
+  console.log('DESTROYING DB CONNECTION');
+  connection.destroy(); //destroy db connection
+  process.exit(0);
+});
+
+
 /**
  * Function to verify the config parameter name and
  * decode it from Base64 (if necessary).
