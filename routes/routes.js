@@ -870,6 +870,79 @@ var appRouter = function (app, connection, asterisk) {
     });
 
 
+    var multer  = require('multer');
+    var storage = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, 'videomails/')
+      },
+      filename: function (req, file, cb) {
+        cb(null, file.fieldname +'-'+ Date.now() + '.webm')
+      }
+    })
+    var upload = multer({ storage: storage })
+
+    app.post('/UploadVideomail', upload.single('videomail'), function (req, res) {
+	console.log("UPLOAD VIDEOMAIL")
+        let ext = req.body.ext;
+        let phoneNumber = req.body.phoneNumber;
+        let duration = req.body.duration;
+        let channel = req.body.channel;
+        let uniqueid = req.body.uniqueid;
+	let filename = req.file.filename;
+	let filepath = __dirname+"/../"+req.file.path;
+ 	filepath = filepath.replace(filename,'')
+
+        let query = `INSERT INTO videomail
+                     (extension, callbacknumber, recording_agent, 
+                     processing_agent, received, processed, video_duration, 
+                     status, deleted, src_channel, dest_channel, unique_id, 
+                     video_filename, video_filepath)
+                     VALUES (?,?,'kms_agent',null, NOW(), null, ?, 'UNREAD',0,null,?,?,?,?);`;
+
+        let params = [ext, phoneNumber, duration, channel, uniqueid, filename, filepath];
+        connection.query(query, params, function (err, results) {
+          if (err) {
+            console.log(err);
+            res.status(500).send({
+              'message': 'MySQL error'
+            });
+          } else if (results.affectedRows > 0) {
+            res.status(200).send({
+              'message': 'Success!'
+            });
+          } else {
+            res.status(200).send({
+              'message': 'Failed!'
+            });
+          }
+        });
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 };
 
