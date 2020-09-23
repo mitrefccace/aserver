@@ -651,4 +651,3 @@ _Sent in Success Response._
 
 `curl -k -H "Content-Type: application/json" -X POST -d '{"data":[{"username":"user0","password":"pass0","first_name":"Kevin","last_name":"Spacey","role":"administrator","phone":"000-000-0000","email":"admin0@portal.com","organization":"OrganizationAlpha","is_approved":1,"is_active":1,"extension_id":0,"queue_id":0,"queue2_id":1},{"username":"user1","password":"pass1","first_name":"Stephen","last_name":"Baldwin","role":"manager","phone":"111-111-111","email":"manager1@portal.com","organization":"OrganizationBeta","is_approved":0,"is_active":0,"extension_id":1,"queue_id":2,"queue2_id":3}]}' https://IP address:port/addAgents`
 
-
