@@ -11,6 +11,25 @@ var log4js = require('log4js');
 var nconf = require('nconf');
 var morgan = require('morgan');
 var cfile = null;
+var connection = null;
+
+//CLEAN UP function; must be at the top!
+//for exits, abnormal ends, signals, uncaught exceptions
+var cleanup = require('./cleanup').Cleanup(myCleanup);
+function myCleanup() {
+  //clean up code on exit, exception, SIGINT, etc.
+  console.log('');
+  console.log('***Exiting***');
+
+  //DB cleanup
+  if (connection) {
+    console.log('Cleaning up DB connection...');
+    connection.destroy();
+  }
+
+  console.log('byeee.');
+  console.log('');
+};
 
 // Initialize log4js
 var logname = 'aserver';
@@ -95,7 +114,7 @@ clear(); // clear console
 */
 
 // Create MySQL connection and connect to it
-var connection = mysql.createConnection({
+connection = mysql.createConnection({
     host: getConfigVal('database_servers:mysql:host'),
     user: getConfigVal('database_servers:mysql:user'),
     password: getConfigVal('database_servers:mysql:password'),
@@ -132,22 +151,6 @@ var server = https.createServer(credentials, app);
 
 server.listen(parseInt(getConfigVal('agent_service:port')));
 console.log('https web server for agent portal up and running on port %s   (Ctrl+C to Quit)', parseInt(getConfigVal('agent_service:port')));
-
-// Handle Ctrl-C (graceful shutdown)
-process.on('SIGINT', function () {
-    console.log('Exiting...');
-    connection.end();
-    process.exit(0);
-});
-
-//graceful shutdown, especially with node restarts
-process.on('exit', function() {
-  console.log('exit caught');
-  console.log('DESTROYING DB CONNECTION');
-  connection.destroy(); //destroy db connection
-  process.exit(0);
-});
-
 
 /**
  * Function to verify the config parameter name and
